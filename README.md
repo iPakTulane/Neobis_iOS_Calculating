@@ -7,7 +7,7 @@ I've developed a classic iPhone calculator that performs calculations specified 
 ## Design
 The calculator adopts the iPhone’s standard calculator design, providing users with a familiar and user-friendly experience.
 
-![Picture1](https://github.com/iPakTulane/Neobis_iOS_Calculating/assets/117035210/6418027c-9b06-4e6d-8824-4d2361ca8e36){: align=center width=200}
+<img src="https://github.com/iPakTulane/Neobis_iOS_Calculating/assets/117035210/6418027c-9b06-4e6d-8824-4d2361ca8e36" width="200" height="200" align="center"/>
 
 ## Architectural Pattern
 The app implements the MVVM (Model-View-ViewModel) architectural pattern to ensure a clean and maintainable codebase.
