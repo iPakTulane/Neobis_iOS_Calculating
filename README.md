@@ -24,9 +24,6 @@ Once the project is set up, using the calculator is straightforward:
 - Results will be displayed on the calculator screen.
 - Use the provided functionalities to clear the input or modify the current calculation.
 
-## Frameworks
-List any additional frameworks or dependencies used in the project.
-
 ## How to Install
 To get started with the project, follow these steps:
 - Clone the repository to your local machine
@@ -36,9 +33,9 @@ To get started with the project, follow these steps:
 ## Lessons Learned
 During the development of the Neobis iOS Calculating project, several insights and lessons were gained:
 
-- MVVM Implementation: Understanding and implementing the MVVM architectural pattern improved code organization and maintainability.
-- Programmatic UI: Building the interface without Storyboard enhanced proficiency in programmatic UI development.
-- SnapKit Integration: Working with SnapKit simplified Auto Layout constraints and improved the dynamic layout of the calculator.
+- **MVVM Implementation**: Understanding and implementing the MVVM architectural pattern improved code organization and maintainability.
+- **Programmatic UI**: Building the interface without Storyboard enhanced proficiency in programmatic UI development.
+- **SnapKit Integration**: Working with SnapKit simplified Auto Layout constraints and improved the dynamic layout of the calculator.
 
 ## How to contact
 For further information, inquiries, or contributions, feel free to contact:
