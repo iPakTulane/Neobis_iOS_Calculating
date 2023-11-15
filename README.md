@@ -44,10 +44,10 @@ During the development of the Neobis iOS Calculating project, several insights a
 For further information, inquiries, or contributions, feel free to contact:
 
 Author: **Igor Pak** 
-GitHub: [GitHub Profile](https://github.com/iPakTulane)
-Email: [ipak.tulane@gmail.com](mailto:ipak.tulane@gmail.com)
-LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/igor-pak-39152a42/)
-Telegram: [@iPakDev](https://t.me/iPakDev)
+- GitHub: [GitHub Profile](https://github.com/iPakTulane)
+- Email: [ipak.tulane@gmail.com](mailto:ipak.tulane@gmail.com)
+- LinkedIn: [LinkedIn Profile](https://www.linkedin.com/in/igor-pak-39152a42/)
+- Telegram: [@iPakDev](https://t.me/iPakDev)
 
 ## License
 This project is licensed under the MIT License.
