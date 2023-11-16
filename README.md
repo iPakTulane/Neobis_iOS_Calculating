@@ -15,7 +15,6 @@ The app implements the MVVM (Model-View-ViewModel) architectural pattern to ensu
 ## Frameworks
 - UIKit: The fundamental framework for building the user interface.
 - MVVM: Implements the Model-View-ViewModel architectural pattern for code organization.
-- SnapKit: A concise Auto Layout DSL to simplify the layout code.
 
 ## How to Use
 Once the project is set up, using the calculator is straightforward:
@@ -35,7 +34,6 @@ During the development of the Neobis iOS Calculating project, several insights a
 
 - **MVVM Implementation**: Understanding and implementing the MVVM architectural pattern improved code organization and maintainability.
 - **Programmatic UI**: Building the interface without Storyboard enhanced proficiency in programmatic UI development.
-- **SnapKit Integration**: Working with SnapKit simplified Auto Layout constraints and improved the dynamic layout of the calculator.
 
 ## How to contact
 For further information, inquiries, or contributions, feel free to contact:
