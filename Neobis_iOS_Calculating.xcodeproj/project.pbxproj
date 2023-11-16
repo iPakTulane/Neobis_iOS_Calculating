@@ -56,15 +56,39 @@
 		BAC223F52B04CEF700543C86 /* Neobis_iOS_Calculating */ = {
 			isa = PBXGroup;
 			children = (
-				BAC223F62B04CEF700543C86 /* AppDelegate.swift */,
+				BAC224102B06303100543C86 /* Model */,
+				BAC2240F2B06302B00543C86 /* View */,
+				BAC2240E2B06301D00543C86 /* ViewModel */,
 				BAC223FA2B04CEF700543C86 /* CalculatorViewController.swift */,
 				BAC2240A2B0519BF00543C86 /* CalculatorButton.swift */,
 				BAC2240C2B0519E200543C86 /* Operation.swift */,
 				BAC223FF2B04CEF800543C86 /* Assets.xcassets */,
 				BAC224012B04CEF800543C86 /* LaunchScreen.storyboard */,
 				BAC224042B04CEF800543C86 /* Info.plist */,
+				BAC223F62B04CEF700543C86 /* AppDelegate.swift */,
 			);
 			path = Neobis_iOS_Calculating;
+			sourceTree = "<group>";
+		};
+		BAC2240E2B06301D00543C86 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		BAC2240F2B06302B00543C86 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		BAC224102B06303100543C86 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
