@@ -32,12 +32,16 @@ class CalculatorViewController: UIViewController {
     lazy var valueLabel: UILabel = {
         let label = UILabel()
         label.text = value
+        label.numberOfLines = 1
         label.font = UIFont.systemFont(ofSize: 100)
         label.textColor = .white
         label.textAlignment = .right
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.5 // Adjust this value based on your preference
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     
     // MARK: -
     override func viewDidLoad() {
@@ -64,7 +68,8 @@ class CalculatorViewController: UIViewController {
             displayLabel.heightAnchor.constraint(equalToConstant: 260),
             
             // valueLabel
-            valueLabel.bottomAnchor.constraint(equalTo: displayLabel.bottomAnchor, constant: 8),
+            valueLabel.bottomAnchor.constraint(equalTo: displayLabel.bottomAnchor, constant: 10),
+            valueLabel.leadingAnchor.constraint(equalTo: displayLabel.leadingAnchor),
             valueLabel.trailingAnchor.constraint(equalTo: displayLabel.trailingAnchor),
         ])
         
@@ -88,6 +93,7 @@ class CalculatorViewController: UIViewController {
                 zeroButton.setTitleColor(.white, for: .normal)
                 zeroButton.layer.cornerRadius = 40
                 zeroButton.addTarget(self, action: #selector(didTapButton(_:)), for: .touchUpInside)
+                zeroButton.isUserInteractionEnabled = true
                 zeroButton.translatesAutoresizingMaskIntoConstraints = false
                 buttonsHStackView.addArrangedSubview(zeroButton)
                 
@@ -99,6 +105,7 @@ class CalculatorViewController: UIViewController {
                 decimalButton.setTitleColor(.white, for: .normal)
                 decimalButton.layer.cornerRadius = buttonWidth(item: row[1]) / 2
                 decimalButton.addTarget(self, action: #selector(didTapButton(_:)), for: .touchUpInside)
+                decimalButton.isUserInteractionEnabled = true
                 decimalButton.translatesAutoresizingMaskIntoConstraints = false
                 buttonsHStackView.addArrangedSubview(decimalButton)
                                 
@@ -110,6 +117,7 @@ class CalculatorViewController: UIViewController {
                 equalButton.setTitleColor(.white, for: .normal)
                 equalButton.layer.cornerRadius = buttonWidth(item: row[2]) / 2
                 equalButton.addTarget(self, action: #selector(didTapButton(_:)), for: .touchUpInside)
+                equalButton.isUserInteractionEnabled = true
                 equalButton.translatesAutoresizingMaskIntoConstraints = false
                 buttonsHStackView.addArrangedSubview(equalButton)
                 
@@ -117,30 +125,25 @@ class CalculatorViewController: UIViewController {
                     // zeroButton
                     zeroButton.centerYAnchor.constraint(equalTo: buttonsHStackView.centerYAnchor),
                     zeroButton.leadingAnchor.constraint(equalTo: buttonsHStackView.leadingAnchor, constant: 5),
-                    zeroButton.widthAnchor.constraint(equalToConstant: ((UIScreen.main.bounds.width - (4 * 12)) / 4) * 2),
+                    zeroButton.widthAnchor.constraint(equalToConstant: buttonHeight() * 2),
                     // decimalButton
                     decimalButton.centerYAnchor.constraint(equalTo: buttonsHStackView.centerYAnchor),
                     decimalButton.trailingAnchor.constraint(equalTo: equalButton.leadingAnchor, constant: -10),
-                    decimalButton.widthAnchor.constraint(equalToConstant: ((UIScreen.main.bounds.width - (4 * 12)) / 4)),
+                    decimalButton.widthAnchor.constraint(equalToConstant: buttonHeight()),
                     // equalButton
                     equalButton.centerYAnchor.constraint(equalTo: buttonsHStackView.centerYAnchor),
                     equalButton.trailingAnchor.constraint(equalTo: buttonsHStackView.trailingAnchor),
-                    equalButton.widthAnchor.constraint(equalToConstant: ((UIScreen.main.bounds.width - (4 * 12)) / 4)),
+                    equalButton.widthAnchor.constraint(equalToConstant: buttonHeight()),
                 ])
                 
             } else {
-                
                 // For upper rows, use fillEqually distribution
                 buttonsHStackView.distribution = .fillEqually
                 for item in row {
-                    let button = UIButton()
-                    button.setTitle(item.rawValue, for: .normal)
-                    button.titleLabel?.font = UIFont.systemFont(ofSize: 38)
-                    button.backgroundColor = item.buttonColor
-                    button.setTitleColor(.white, for: .normal)
-                    button.layer.cornerRadius = buttonWidth(item: item) / 2
-                    button.addTarget(self, action: #selector(didTapButton(_:)), for: .touchUpInside)
-                    button.translatesAutoresizingMaskIntoConstraints = false
+                    let button = configureButton(
+                        with: item.rawValue,
+                        color: item.buttonColor,
+                        action: #selector(didTapButton(_:)))
                     buttonsHStackView.addArrangedSubview(button)
                 }
             }
@@ -159,8 +162,25 @@ class CalculatorViewController: UIViewController {
     }
     
     
+    func configureButton(with title: String, color: UIColor, action: Selector) -> UIButton {
+        let button = UIButton()
+        button.setTitle(title, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 38)
+        button.backgroundColor = color
+        button.setTitleColor(.white, for: .normal)
+        button.layer.cornerRadius = buttonWidth(item: CalculatorButton(rawValue: title)!) / 2
+        button.addTarget(self, action: action, for: .touchUpInside)
+        button.isUserInteractionEnabled = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }
+    
+    
     // MARK: -
     @objc func didTapButton(_ sender: UIButton) {
+        
+        print("Button tapped: \(sender.titleLabel?.text ?? "Unknown")")
+        
         if let buttonText = sender.title(for: .normal),
            let button = CalculatorButton(rawValue: buttonText) {
             didTap(button: button)
@@ -202,7 +222,8 @@ class CalculatorViewController: UIViewController {
             if button != .equal {
                 self.value = "0"
             }
-            
+
+            // MARK: -
         case .clear:
             self.value = "0"
         case .decimal, .negative, .percent:
@@ -210,11 +231,35 @@ class CalculatorViewController: UIViewController {
         default:
             let number = button.rawValue
             if self.value == "0" {
-                value = number
-            }
-            else {
+                self.value = number
+            } else {
                 self.value = "\(self.value)\(number)"
             }
+        }
+
+        // Update the display label after handling the button tap
+        updateDisplayLabel()
+    }
+
+    // MARK: -
+    func updateDisplayLabel() {
+        let maxCharacterCount = 9
+        var displayedText = value
+
+        // Truncate if the value exceeds the character count limit
+        if displayedText.count > maxCharacterCount {
+            displayedText = String(displayedText.prefix(maxCharacterCount))
+        }
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+
+        // Attempt to convert the value to a number and format it
+        if let numberValue = Double(displayedText), let formattedValue = formatter.string(from: NSNumber(value: numberValue)) {
+            valueLabel.text = formattedValue
+        } else {
+            // If conversion fails, display the original text
+            valueLabel.text = displayedText
         }
     }
     
