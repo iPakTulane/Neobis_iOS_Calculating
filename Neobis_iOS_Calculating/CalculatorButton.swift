@@ -28,16 +28,6 @@ enum CalculatorButton: String {
     case negative = "±"
     case percent = "%"
     
-    
-    var doubleWidth: CGFloat {
-        switch self {
-        case .zero:
-            return ((UIScreen.main.bounds.width - (4 * 12)) / 4) * 2
-        default:
-            return (UIScreen.main.bounds.width - (5 * 12)) / 4
-        }
-    }
-    
     // To color buttons appropriately
     var buttonColor: UIColor {
         switch self {

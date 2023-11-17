@@ -10,7 +10,7 @@ import UIKit
 class CalculatorViewController: UIViewController {
     
     // MARK: -
-    var value = "0" // default value to display
+    var value = "0"
     var runningNumber = 0
     var currentOperation: Operation = .none
     
@@ -172,22 +172,45 @@ class CalculatorViewController: UIViewController {
         button.addTarget(self, action: action, for: .touchUpInside)
         button.isUserInteractionEnabled = true
         button.translatesAutoresizingMaskIntoConstraints = false
+        
         return button
     }
     
     
     // MARK: -
+    func buttonWidth(item: CalculatorButton) -> CGFloat {
+        return (UIScreen.main.bounds.width - (5 * 12)) / 4
+    }
+    
+    func buttonHeight() -> CGFloat {
+        return (UIScreen.main.bounds.width - (5 * 12)) / 4
+    }
+    
+}
+
+// MARK: -
+extension CalculatorViewController {
+    
+    
     @objc func didTapButton(_ sender: UIButton) {
-        
         print("Button tapped: \(sender.titleLabel?.text ?? "Unknown")")
-        
-        if let buttonText = sender.title(for: .normal),
-           let button = CalculatorButton(rawValue: buttonText) {
-            didTap(button: button)
-        }
+
+        // Reduce the alpha to visually reflect the tap
+        sender.alpha = 0.5
+
+        UIView.animate(
+            withDuration: 0.2,
+            animations: { sender.alpha = 1.0 },
+            completion: { _ in
+            if let buttonText = sender.title(for: .normal), 
+                let button = CalculatorButton(rawValue: buttonText) {
+                self.didTap(button: button)
+            }
+        })
     }
     
     func didTap(button: CalculatorButton) {
+        
         switch button {
         case .add, .subtract, .multiply, .divide, .equal:
             if button == .add {
@@ -227,7 +250,9 @@ class CalculatorViewController: UIViewController {
         case .clear:
             self.value = "0"
         case .decimal, .negative, .percent:
-            break
+            // Update the display label for these cases
+            updateDisplayLabel()
+            // break
         default:
             let number = button.rawValue
             if self.value == "0" {
@@ -261,15 +286,6 @@ class CalculatorViewController: UIViewController {
             // If conversion fails, display the original text
             valueLabel.text = displayedText
         }
-    }
-    
-    // MARK: -
-    func buttonWidth(item: CalculatorButton) -> CGFloat {
-        return (UIScreen.main.bounds.width - (5 * 12)) / 4
-    }
-    
-    func buttonHeight() -> CGFloat {
-        return (UIScreen.main.bounds.width - (5 * 12)) / 4
     }
     
 }
