@@ -9,9 +9,17 @@ import UIKit
 
 class CalculatorViewController: UIViewController {
     
+    private lazy var formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
+    
     // MARK: -
-    var value = "0"
-    var runningNumber = 0
+    var value: String = "0" // Displayed value
+        var runningNumber: Double = 0
+//    var firstOperand: Double = 0
+    
     var currentOperation: Operation = .none
     
     let buttons: [[CalculatorButton]] = [
@@ -28,7 +36,7 @@ class CalculatorViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-
+    
     lazy var valueLabel: UILabel = {
         let label = UILabel()
         label.text = value
@@ -108,7 +116,7 @@ class CalculatorViewController: UIViewController {
                 decimalButton.isUserInteractionEnabled = true
                 decimalButton.translatesAutoresizingMaskIntoConstraints = false
                 buttonsHStackView.addArrangedSubview(decimalButton)
-                                
+                
                 // Create the third button in the last row
                 let equalButton = UIButton()
                 equalButton.setTitle(row[2].rawValue, for: .normal)
@@ -188,86 +196,117 @@ class CalculatorViewController: UIViewController {
     
 }
 
-// MARK: -
+// MARK: - Buttons logic 
+
 extension CalculatorViewController {
     
-    
+    // MARK: - Button tap event
     @objc func didTapButton(_ sender: UIButton) {
         print("Button tapped: \(sender.titleLabel?.text ?? "Unknown")")
-
         // Reduce the alpha to visually reflect the tap
         sender.alpha = 0.5
-
-        UIView.animate(
-            withDuration: 0.2,
-            animations: { sender.alpha = 1.0 },
-            completion: { _ in
-            if let buttonText = sender.title(for: .normal), 
-                let button = CalculatorButton(rawValue: buttonText) {
+        UIView.animate(withDuration: 0.2) {
+            sender.alpha = 1.0
+        } completion: { _ in
+            if let buttonText = sender.title(for: .normal),
+               let button = CalculatorButton(rawValue: buttonText) {
                 self.didTap(button: button)
             }
-        })
+        }
     }
+    
+    // MARK: - Calculator logic
     
     func didTap(button: CalculatorButton) {
         
         switch button {
-        case .add, .subtract, .multiply, .divide, .equal:
-            if button == .add {
-                self.currentOperation = .add
-                self.runningNumber = Int(self.value) ?? 0
+            // MARK: - Operation buttons
+        case .add, .subtract, .multiply, .divide:
+            updateDisplayLabel()
+            guard let currentValue = Double(value) else {
+                print("Error: Cannot convert \(value) to Double")
+                return
             }
-            else if button == .subtract {
-                self.currentOperation = .subtract
-                self.runningNumber = Int(self.value) ?? 0
-            }
-            else if button == .multiply {
-                self.currentOperation = .multiply
-                self.runningNumber = Int(self.value) ?? 0
-            }
-            else if button == .divide {
-                self.currentOperation = .divide
-                self.runningNumber = Int(self.value) ?? 0
-            }
-            else if button == .equal {
-                let runningValue = self.runningNumber
-                let currentValue = Int(self.value) ?? 0
-                switch self.currentOperation {
-                case .add: self.value = "\(runningValue + currentValue)"
-                case .subtract: self.value = "\(runningValue - currentValue)"
-                case .multiply: self.value = "\(runningValue * currentValue)"
-                case .divide: self.value = "\(runningValue / currentValue)"
-                case .none:
-                    break
-                }
+            runningNumber = currentValue
+            switch button {
+            case .add: currentOperation = .add
+            case .subtract: currentOperation = .subtract
+            case .multiply: currentOperation = .multiply
+            case .divide: currentOperation = .divide
+            default: break
             }
             
-            if button != .equal {
-                self.value = "0"
+        case .equal:
+            let firstOperand = runningNumber
+            let secondOperand = Double(value) ?? 0
+            
+            // Check "0" before performing the equation
+            guard secondOperand != 0 || currentOperation != .divide else {
+                print("Error: Division by zero is not allowed.")
+                value = "Error"
+                updateDisplayLabel()
+                return
             }
-
+            
+            switch currentOperation {
+            case .add: value = "\(firstOperand + secondOperand)"
+            case .subtract: value = "\(firstOperand - secondOperand)"
+            case .multiply: value = "\(firstOperand * secondOperand)"
+            case .divide:
+                guard secondOperand != 0 else {
+                    print("Error: Division by zero is not allowed.")
+                    value = "Error"
+                    updateDisplayLabel()
+                    return
+                }
+                value = "\(firstOperand / secondOperand)"
+            case .none: break
+            }
+            
+            // Update the display label after performing the equation
+            updateDisplayLabel()
+            
             // MARK: -
         case .clear:
-            self.value = "0"
-        case .decimal, .negative, .percent:
-            // Update the display label for these cases
+            value = "0"
             updateDisplayLabel()
-            // break
+            
+            // MARK: -
+        case .decimal:
+            if !value.contains(".") {
+                value += "."
+                updateDisplayLabel()
+            }
+            
+            // MARK: -
+        case .negative:
+            if let numericValue = Double(value) {
+                value = "\(numericValue * -1)"
+                updateDisplayLabel()
+            }
+            
+            // MARK: -
+        case .percent:
+            if let numericValue = Double(value) {
+                value = "\(numericValue / 100)"
+                updateDisplayLabel()
+            }
+            
+            // MARK: - Digital buttons
         default:
             let number = button.rawValue
-            if self.value == "0" {
-                self.value = number
-            } else {
-                self.value = "\(self.value)\(number)"
-            }
+            value = (value == "0") ? number : "\(value)\(number)"
         }
-
-        // Update the display label after handling the button tap
+        
+        // Update the display label after tapping the button
         updateDisplayLabel()
     }
-
+    
+    
     // MARK: -
+
     func updateDisplayLabel() {
+        
         let maxCharacterCount = 9
         var displayedText = value
 
@@ -276,11 +315,9 @@ extension CalculatorViewController {
             displayedText = String(displayedText.prefix(maxCharacterCount))
         }
 
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-
         // Attempt to convert the value to a number and format it
-        if let numberValue = Double(displayedText), let formattedValue = formatter.string(from: NSNumber(value: numberValue)) {
+        if let numberValue = Double(displayedText),
+           let formattedValue = formatter.string(from: NSNumber(value: numberValue)) {
             valueLabel.text = formattedValue
         } else {
             // If conversion fails, display the original text
@@ -289,3 +326,5 @@ extension CalculatorViewController {
     }
     
 }
+
+

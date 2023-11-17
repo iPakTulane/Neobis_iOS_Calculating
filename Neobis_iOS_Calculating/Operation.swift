@@ -13,4 +13,5 @@ enum Operation {
     case multiply
     case divide
     case none
+    
 }
